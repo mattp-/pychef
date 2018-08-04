@@ -1,8 +1,9 @@
 import six
 import collections
 
-from chef.base import ChefObject
+from chef.base import ChefObject, OptionalAttr
 from chef.exceptions import ChefError
+
 
 class NodeAttributes(collections.MutableMapping):
     """A collection of Chef :class:`~chef.Node` attributes.
@@ -196,8 +197,10 @@ class Node(ChefObject):
         'override': NodeAttributes,
         'automatic': NodeAttributes,
         'run_list': list,
-        'chef_environment': str
-    }
+        'chef_environment': str,
+        'policy_name': OptionalAttr(str),
+        'policy_group': OptionalAttr(str),
+        }
 
     def has_key(self, key):
       return self.attributes.has_dotted(key)

@@ -35,7 +35,7 @@ class mockSearch(object):
 
 
 def test_chef_api(**kwargs):
-    return ChefAPI('https://api.opscode.com/organizations/pycheftest', os.path.join(TEST_ROOT, 'client.pem'), 'unittests', **kwargs)
+    return ChefAPI('https://api.opscode.com/organizations/pycheftest', os.path.join(TEST_ROOT, 'client.pem'), 'unittests', ssl_verify=False, **kwargs)
 
 
 class ChefTestCase(TestCase):

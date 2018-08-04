@@ -7,6 +7,13 @@ from chef.acl import Acl
 from chef.api import ChefAPI
 from chef.exceptions import *
 
+
+class OptionalAttr(object):
+    wrapped = None
+    def __init__(self, wrapped):
+        self.wrapped = wrapped
+
+
 class ChefQuery(collections.Mapping):
     def __init__(self, obj_class, names, api):
         self.obj_class = obj_class
@@ -65,8 +72,13 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
     def _populate(self, data):
         for name, cls in six.iteritems(self.__class__.attributes):
             if name in data:
-                value = cls(data[name])
+                if isinstance(cls, OptionalAttr):
+                    value = cls.wrapped(data[name])
+                else:
+                    value = cls(data[name])
             else:
+                if isinstance(cls, OptionalAttr):
+                    continue
                 value = cls()
             setattr(self, name, value)
 
@@ -123,7 +135,8 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
             'chef_type': self.__class__.__name__.lower(),
         }
         for attr in six.iterkeys(self.__class__.attributes):
-            d[attr] = getattr(self, attr)
+            if hasattr(self, attr):
+                d[attr] = getattr(self, attr)
         return d
 
     def __str__(self):
